@@ -1,65 +1,130 @@
-import Head from 'next/head'
-import styles from '../styles/Home.module.css'
+import { useState, useEffect } from "react";
+import Head from "next/head";
+import { Container, Row, Col, Dropdown } from "react-bootstrap";
+import Card from "../components/Card";
+import WCApi from "../utils/WCApi";
+import moment from "moment";
 
 export default function Home() {
+  const [totalSales, setTotalSales] = useState("Loading");
+  const [selectDate, setSelectDate] = useState({
+    beginning: "2020-08-01",
+    ending: "2020-08-30",
+  });
+
+  async function getWCData(type, param) {
+    const fetchData = await WCApi.get(type, param);
+    const res = fetchData.data[0];
+
+    return res;
+  }
+
+  function getWCDataWithDate(b, e) {
+    setSelectDate({
+      beginning: b,
+      ending: e,
+    });
+
+    setTotalSales("Loading");
+
+    getWCData("reports/sales", {
+      date_min: b || selectDate.beginning,
+      date_max: e || selectDate.ending,
+    }).then((res) => setTotalSales(res));
+  }
+
+  useEffect(() => {
+    getWCDataWithDate(selectDate.beginning, selectDate.ending);
+  }, []);
+
+  const monthlyDates = [
+    { beginning: "2020-08-01", ending: "2020-08-30" },
+    { beginning: "2020-07-01", ending: "2020-07-31" },
+    { beginning: "2020-06-01", ending: "2020-06-30" },
+  ];
+
+  console.log(selectDate);
+
   return (
-    <div className={styles.container}>
+    <Container>
       <Head>
-        <title>Create Next App</title>
-        <link rel="icon" href="/favicon.ico" />
+        <title>Natural Dashboard</title>
+        <link rel='icon' href='/favicon.ico' />
       </Head>
+      <Row>
+        <Col>
+          <h1 className='mt-4 mb-4' align='center'>
+            Natural Dashboard
+          </h1>
+        </Col>
+      </Row>
+      <Row className='mb-4'>
+        <Col>
+          <Dropdown>
+            <Dropdown.Toggle id='dropdown-basic'>Pick a Month</Dropdown.Toggle>
 
-      <main className={styles.main}>
-        <h1 className={styles.title}>
-          Welcome to <a href="https://nextjs.org">Next.js!</a>
-        </h1>
-
-        <p className={styles.description}>
-          Get started by editing{' '}
-          <code className={styles.code}>pages/index.js</code>
-        </p>
-
-        <div className={styles.grid}>
-          <a href="https://nextjs.org/docs" className={styles.card}>
-            <h3>Documentation &rarr;</h3>
-            <p>Find in-depth information about Next.js features and API.</p>
-          </a>
-
-          <a href="https://nextjs.org/learn" className={styles.card}>
-            <h3>Learn &rarr;</h3>
-            <p>Learn about Next.js in an interactive course with quizzes!</p>
-          </a>
-
-          <a
-            href="https://github.com/vercel/next.js/tree/master/examples"
-            className={styles.card}
+            <Dropdown.Menu>
+              {monthlyDates.map((date) => (
+                <Dropdown.Item
+                  onClick={() => getWCDataWithDate(date.beginning, date.ending)}
+                  key={date.beginning}
+                >
+                  {date.beginning} - {date.ending}
+                </Dropdown.Item>
+              ))}
+            </Dropdown.Menu>
+          </Dropdown>
+        </Col>
+      </Row>
+      <Row>
+        <Col className='justify-content-center'>
+          <div align='center'>
+            {selectDate.beginning} - {selectDate.ending}
+          </div>
+        </Col>
+      </Row>
+      <Row>
+        <Col>
+          <Card
+            bg={totalSales === "Loading" ? "light" : "info"}
+            text='white'
+            title='Total Discounts'
+            money
           >
-            <h3>Examples &rarr;</h3>
-            <p>Discover and deploy boilerplate example Next.js projects.</p>
-          </a>
-
-          <a
-            href="https://vercel.com/import?filter=next.js&utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-            className={styles.card}
+            {totalSales.total_discount}
+          </Card>
+        </Col>
+        <Col>
+          <Card
+            bg={totalSales === "Loading" ? "light" : "success"}
+            text='white'
+            title='Total Refunds'
           >
-            <h3>Deploy &rarr;</h3>
-            <p>
-              Instantly deploy your Next.js site to a public URL with Vercel.
-            </p>
-          </a>
-        </div>
-      </main>
-
-      <footer className={styles.footer}>
-        <a
-          href="https://vercel.com?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Powered by{' '}
-          <img src="/vercel.svg" alt="Vercel Logo" className={styles.logo} />
-        </a>
-      </footer>
-    </div>
-  )
+            {totalSales.total_refunds < 1 ? "None" : totalSales.total_sales}
+          </Card>
+        </Col>
+        <Col>
+          <Card
+            bg={totalSales === "Loading" ? "light" : "warning"}
+            text='black'
+            title='Total Orders'
+          >
+            {totalSales.total_orders}
+          </Card>
+        </Col>
+      </Row>
+      <Row>
+        <Col>
+          <Card
+            bg={totalSales === "Loading" ? "light" : "primary"}
+            text='white'
+            title='Total Sales'
+            money
+          >
+            {totalSales.total_sales}
+          </Card>
+        </Col>
+      </Row>
+    </Container>
+  );
 }
