@@ -1,9 +1,14 @@
 html,
 body {
+  background-color: #eeeeee;
   padding: 0;
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen,
     Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
+
+  div {
+    transition: all 0.3s ease;
+  }
 }
 
 a {
@@ -16,6 +21,14 @@ a {
 }
 
 .card {
+  min-height: 150px;
+  box-shadow: 0rem 0rem 1rem rgba(0, 0, 0, 0.2);
+
+  &:hover {
+    box-shadow: 0rem 0.9rem 1rem rgba(0, 0, 0, 0.16);
+    margin-top: -2px;
+  }
+
   &-header {
     text-align: center;
   }
@@ -23,5 +36,26 @@ a {
   &-text {
     font-size: 2.4em;
     text-align: center;
+  }
+}
+
+.CalendarDay {
+  &__selected_span {
+    background: rgba(0, 0, 0, 0.6);
+    border: rgba(0, 0, 0, 1);
+
+    &:hover {
+      background: rgba(0, 0, 0, 0.75);
+      border: rgba(0, 0, 0, 1);
+    }
+  }
+  &__selected {
+    background: rgba(0, 0, 0, 0.75);
+    border: rgba(0, 0, 0, 1);
+
+    &:hover {
+      background: rgba(0, 0, 0, 0.75);
+      border: rgba(0, 0, 0, 1);
+    }
   }
 }

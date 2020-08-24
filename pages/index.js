@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import Head from "next/head";
 import { Container, Row, Col, Dropdown } from "react-bootstrap";
 import Card from "../components/Card";
+import { DateRangePicker } from "react-dates";
 import WCApi from "../utils/WCApi";
 import moment from "moment";
 
@@ -11,6 +12,7 @@ export default function Home() {
     beginning: "2020-08-01",
     ending: "2020-08-30",
   });
+  const [focus, setFocus] = useState(null);
 
   async function getWCData(type, param) {
     const fetchData = await WCApi.get(type, param);
@@ -43,7 +45,7 @@ export default function Home() {
     { beginning: "2020-06-01", ending: "2020-06-30" },
   ];
 
-  console.log(selectDate);
+  console.log("beginning", selectDate);
 
   return (
     <Container>
@@ -59,10 +61,25 @@ export default function Home() {
         </Col>
       </Row>
       <Row className='mb-4'>
-        <Col>
+        <Col xs={6} sm={6} md={10} lg={10}>
+          <DateRangePicker
+            startDate={moment(selectDate.beginning)} // momentPropTypes.momentObj or null,
+            startDateId='reportStartDate' // PropTypes.string.isRequired,
+            endDate={moment(selectDate.ending)} // momentPropTypes.momentObj or null,
+            endDateId='reportEndDate' // PropTypes.string.isRequired,
+            numberOfMonths={1}
+            displayFormat='MMMM DD'
+            isOutsideRange={() => false}
+            onDatesChange={({ startDate, endDate }) =>
+              setSelectDate({ beginning: startDate, ending: endDate })
+            } // PropTypes.func.isRequired,
+            focusedInput={focus}
+            onFocusChange={(focus) => setFocus(focus)}
+          />
+        </Col>
+        <Col xs={6} sm={6} md={2} lg={2}>
           <Dropdown>
             <Dropdown.Toggle id='dropdown-basic'>Pick a Month</Dropdown.Toggle>
-
             <Dropdown.Menu>
               {monthlyDates.map((date) => (
                 <Dropdown.Item
@@ -77,17 +94,10 @@ export default function Home() {
         </Col>
       </Row>
       <Row>
-        <Col className='justify-content-center'>
-          <div align='center'>
-            {selectDate.beginning} - {selectDate.ending}
-          </div>
-        </Col>
-      </Row>
-      <Row>
         <Col>
           <Card
             bg={totalSales === "Loading" ? "light" : "info"}
-            text='white'
+            text='primary'
             title='Total Discounts'
             money
           >
@@ -97,7 +107,7 @@ export default function Home() {
         <Col>
           <Card
             bg={totalSales === "Loading" ? "light" : "success"}
-            text='white'
+            text='black'
             title='Total Refunds'
           >
             {totalSales.total_refunds < 1 ? "None" : totalSales.total_sales}
