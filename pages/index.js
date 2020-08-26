@@ -151,7 +151,9 @@ export default function Home() {
             text='white'
             title='Subscribers'
           >
-            {cleanNumbers(YTStats.subscriberCount)}
+            {cleanNumbers(
+              YTStats === "Loading" ? "0" : YTStats.subscriberCount
+            )}
           </Card>
         </Col>
         <Col>
@@ -160,7 +162,7 @@ export default function Home() {
             text='white'
             title='Total Views'
           >
-            {cleanNumbers(YTStats.viewCount)}
+            {cleanNumbers(YTStats === "Loading" ? "0" : YTStats.viewCount)}
           </Card>
         </Col>
       </Row>
