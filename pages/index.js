@@ -8,6 +8,7 @@ import moment from "moment";
 
 export default function Home() {
   const [totalSales, setTotalSales] = useState("Loading");
+  const [YTStats, setYTStats] = useState("Loading");
   const [selectDate, setSelectDate] = useState({
     beginning: "2020-08-01",
     ending: "2020-08-30",
@@ -35,11 +36,25 @@ export default function Home() {
     }).then((res) => setTotalSales(res));
   }
 
+  function cleanNumbers(x) {
+    return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+  }
+
+  async function getYTData(part, channel) {
+    const fetchApi = await fetch(
+      `https://www.googleapis.com/youtube/v3/channels?part=${part}&id=${channel}&key=${process.env.NEXT_PUBLIC_YT_API_KEY}`
+    );
+    const res = await fetchApi.json();
+
+    setYTStats(res.items[0].statistics);
+
+    return res;
+  }
+
   useEffect(() => {
     getWCDataWithDate(selectDate.beginning, selectDate.ending);
+    getYTData("statistics", "UCmsrdWd_iMIF2YKGduY5nig");
   }, []);
-
-  console.log("beginning", selectDate);
 
   return (
     <Container>
@@ -52,6 +67,11 @@ export default function Home() {
           <h1 className='mt-4 mb-4' align='center'>
             Natural Dashboard
           </h1>
+        </Col>
+      </Row>
+      <Row>
+        <Col>
+          <h2 align='center'>Sales</h2>
         </Col>
       </Row>
       <Row className='mb-4'>
@@ -91,8 +111,9 @@ export default function Home() {
             bg={totalSales === "Loading" ? "light" : "success"}
             text='black'
             title='Total Refunds'
+            money
           >
-            {totalSales.total_refunds < 1 ? "None" : totalSales.total_sales}
+            {totalSales.total_refunds}
           </Card>
         </Col>
         <Col>
@@ -114,6 +135,31 @@ export default function Home() {
             money
           >
             {totalSales.total_sales}
+          </Card>
+        </Col>
+      </Row>
+      <Row className='mb-4'>
+        <Col>
+          <h2 align='center'>YouTube Stats</h2>
+        </Col>
+      </Row>
+      <Row>
+        <Col>
+          <Card
+            bg={totalSales === "Loading" ? "light" : "danger"}
+            text='white'
+            title='Subscribers'
+          >
+            {cleanNumbers(YTStats.subscriberCount)}
+          </Card>
+        </Col>
+        <Col>
+          <Card
+            bg={totalSales === "Loading" ? "light" : "danger"}
+            text='white'
+            title='Total Views'
+          >
+            {cleanNumbers(YTStats.viewCount)}
           </Card>
         </Col>
       </Row>
