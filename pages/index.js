@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import Head from "next/head";
 import { Container, Row, Col } from "react-bootstrap";
 import Card from "../components/Card";
+import Footer from "../components/Footer";
 import { DateRangePicker } from "react-dates";
 import WCApi from "../utils/WCApi";
 import moment from "moment";
@@ -163,6 +164,7 @@ export default function Home() {
           </Card>
         </Col>
       </Row>
+      <Footer />
     </Container>
   );
 }
