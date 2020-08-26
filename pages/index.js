@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import Head from "next/head";
-import { Container, Row, Col, Dropdown } from "react-bootstrap";
+import { Container, Row, Col } from "react-bootstrap";
 import Card from "../components/Card";
 import { DateRangePicker } from "react-dates";
 import WCApi from "../utils/WCApi";
@@ -30,20 +30,14 @@ export default function Home() {
     setTotalSales("Loading");
 
     getWCData("reports/sales", {
-      date_min: b || selectDate.beginning,
-      date_max: e || selectDate.ending,
+      date_min: b,
+      date_max: e,
     }).then((res) => setTotalSales(res));
   }
 
   useEffect(() => {
     getWCDataWithDate(selectDate.beginning, selectDate.ending);
   }, []);
-
-  const monthlyDates = [
-    { beginning: "2020-08-01", ending: "2020-08-30" },
-    { beginning: "2020-07-01", ending: "2020-07-31" },
-    { beginning: "2020-06-01", ending: "2020-06-30" },
-  ];
 
   console.log("beginning", selectDate);
 
@@ -71,26 +65,14 @@ export default function Home() {
             displayFormat='MMMM DD'
             isOutsideRange={() => false}
             onDatesChange={({ startDate, endDate }) =>
-              setSelectDate({ beginning: startDate, ending: endDate })
-            } // PropTypes.func.isRequired,
+              getWCDataWithDate(
+                moment(startDate).format("YYYY-MM-DD"),
+                moment(endDate).format("YYYY-MM-DD")
+              )
+            }
             focusedInput={focus}
             onFocusChange={(focus) => setFocus(focus)}
           />
-        </Col>
-        <Col xs={6} sm={6} md={2} lg={2}>
-          <Dropdown>
-            <Dropdown.Toggle id='dropdown-basic'>Pick a Month</Dropdown.Toggle>
-            <Dropdown.Menu>
-              {monthlyDates.map((date) => (
-                <Dropdown.Item
-                  onClick={() => getWCDataWithDate(date.beginning, date.ending)}
-                  key={date.beginning}
-                >
-                  {date.beginning} - {date.ending}
-                </Dropdown.Item>
-              ))}
-            </Dropdown.Menu>
-          </Dropdown>
         </Col>
       </Row>
       <Row>
