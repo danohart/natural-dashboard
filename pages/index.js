@@ -8,12 +8,14 @@ import WCApi from "../utils/WCApi";
 import moment from "moment";
 
 export default function Home() {
+  const currentDate = new Date();
   const [totalSales, setTotalSales] = useState("Loading");
   const [YTStats, setYTStats] = useState("Loading");
   const [selectDate, setSelectDate] = useState({
-    beginning: "2020-08-01",
-    ending: "2020-08-30",
+    beginning: currentDate.getFullYear() + "-" + currentDate.getMonth() + "-01",
+    ending: currentDate.getFullYear() + "-" + currentDate.getMonth() + "-30",
   });
+
   const [focus, setFocus] = useState(null);
 
   async function getWCData(type, param) {
@@ -38,6 +40,7 @@ export default function Home() {
   }
 
   function cleanNumbers(x) {
+    if (x === undefined) return 0;
     return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
   }
 
@@ -104,7 +107,7 @@ export default function Home() {
             title='Total Discounts'
             money
           >
-            {totalSales.total_discount}
+            {cleanNumbers(totalSales.total_discount)}
           </Card>
         </Col>
         <Col>
@@ -132,10 +135,32 @@ export default function Home() {
           <Card
             bg={totalSales === "Loading" ? "light" : "primary"}
             text='white'
+            title='Total Sales minus refunds'
+            money
+          >
+            {cleanNumbers(totalSales.total_sales - totalSales.total_refunds)}
+          </Card>
+        </Col>
+        <Col>
+          <Card
+            bg={totalSales === "Loading" ? "light" : "primary"}
+            text='white'
             title='Total Sales'
             money
           >
-            {totalSales.total_sales}
+            {cleanNumbers(totalSales.total_sales)}
+          </Card>
+        </Col>
+        <Col>
+          <Card
+            bg={totalSales === "Loading" ? "light" : "secondary"}
+            text='white'
+            title='10% of total sales'
+            money
+          >
+            {cleanNumbers(
+              (10 / 100) * (totalSales.total_sales - totalSales.total_refunds)
+            )}
           </Card>
         </Col>
       </Row>
