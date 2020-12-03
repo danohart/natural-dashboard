@@ -15,6 +15,7 @@ export default function Home() {
     beginning: currentDate.getFullYear() + "-" + currentDate.getMonth() + "-01",
     ending: currentDate.getFullYear() + "-" + currentDate.getMonth() + "-30",
   });
+  const [percentageNumber, setPercentageNumber] = useState(10);
 
   const [focus, setFocus] = useState(null);
 
@@ -79,7 +80,7 @@ export default function Home() {
         </Col>
       </Row>
       <Row className='mb-4'>
-        <Col xs={6} sm={6} md={10} lg={10}>
+        <Col xs={6} sm={6} md={6} lg={6}>
           <DateRangePicker
             startDate={moment(selectDate.beginning)} // momentPropTypes.momentObj or null,
             startDateId='reportStartDate' // PropTypes.string.isRequired,
@@ -97,6 +98,18 @@ export default function Home() {
             focusedInput={focus}
             onFocusChange={(focus) => setFocus(focus)}
           />
+        </Col>
+        <Col xs={6} sm={6} md={6} lg={6} className='d-flex justify-content-end'>
+          <form>
+            <label>Percentage</label>
+
+            <input
+              type='text'
+              placeholder='percentage'
+              value={percentageNumber}
+              onChange={(e) => setPercentageNumber(e.target.value)}
+            />
+          </form>
         </Col>
       </Row>
       <Row>
@@ -155,11 +168,12 @@ export default function Home() {
           <Card
             bg={totalSales === "Loading" ? "light" : "secondary"}
             text='white'
-            title='10% of total sales'
+            title={percentageNumber + "% of total sales"}
             money
           >
             {cleanNumbers(
-              (10 / 100) * (totalSales.total_sales - totalSales.total_refunds)
+              (percentageNumber / 100) *
+                (totalSales.total_sales - totalSales.total_refunds)
             )}
           </Card>
         </Col>
