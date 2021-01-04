@@ -12,8 +12,10 @@ export default function Home() {
   const [totalSales, setTotalSales] = useState("Loading");
   const [YTStats, setYTStats] = useState("Loading");
   const [selectDate, setSelectDate] = useState({
-    beginning: currentDate.getFullYear() + "-" + currentDate.getMonth() + "-01",
-    ending: currentDate.getFullYear() + "-" + currentDate.getMonth() + "-30",
+    beginning:
+      currentDate.getFullYear() + "-" + currentDate.getMonth() + 1 + "-01",
+    ending:
+      currentDate.getFullYear() + "-" + currentDate.getMonth() + 1 + "-30",
   });
   const [percentageNumber, setPercentageNumber] = useState(10);
 
