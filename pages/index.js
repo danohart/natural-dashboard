@@ -44,7 +44,11 @@ export default function Home() {
 
   function cleanNumbers(x) {
     if (x === undefined) return 0;
-    return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    if (isNaN(x)) return 0;
+    const integer = parseFloat(x).toFixed(2);
+    const commaNumber = integer.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+
+    return commaNumber;
   }
 
   async function getYTData(part, channel) {
