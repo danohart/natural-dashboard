@@ -8,17 +8,13 @@ import WCApi from "../utils/WCApi";
 import moment from "moment";
 
 export default function Home() {
-  const currentDate = new Date();
   const [totalSales, setTotalSales] = useState("Loading");
   const [YTStats, setYTStats] = useState("Loading");
   const [selectDate, setSelectDate] = useState({
-    beginning:
-      currentDate.getFullYear() + "-" + currentDate.getMonth() + 1 + "-01",
-    ending:
-      currentDate.getFullYear() + "-" + currentDate.getMonth() + 1 + "-30",
+    beginning: moment().subtract(30, "days").format("YYYY-MM-DD"),
+    ending: moment().format("YYYY-MM-DD"),
   });
   const [percentageNumber, setPercentageNumber] = useState(10);
-
   const [focus, setFocus] = useState(null);
 
   async function getWCData(type, param) {
