@@ -38,10 +38,12 @@ export default function Home() {
     }).then((res) => setTotalSales(res));
   }
 
-  function cleanNumbers(x) {
-    if (x === undefined) return 0;
-    if (isNaN(x)) return 0;
-    const integer = parseFloat(x).toFixed(2);
+  function cleanNumbers(number, type) {
+    if (number === undefined) return 0;
+    if (isNaN(number)) return 0;
+    let integer = parseFloat(number).toFixed(2);
+    if (type === "roundedNumber") integer = parseFloat(number).toFixed(0);
+
     const commaNumber = integer.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 
     return commaNumber;
@@ -122,7 +124,7 @@ export default function Home() {
             title='Total Discounts'
             money
           >
-            {cleanNumbers(totalSales.total_discount)}
+            {cleanNumbers(totalSales.total_discount, "fullNumber")}
           </Card>
         </Col>
         <Col>
@@ -153,7 +155,10 @@ export default function Home() {
             title='Total Sales minus refunds'
             money
           >
-            {cleanNumbers(totalSales.total_sales - totalSales.total_refunds)}
+            {cleanNumbers(
+              totalSales.total_sales - totalSales.total_refunds,
+              "fullNumber"
+            )}
           </Card>
         </Col>
         <Col>
@@ -163,7 +168,7 @@ export default function Home() {
             title='Total Sales'
             money
           >
-            {cleanNumbers(totalSales.total_sales)}
+            {cleanNumbers(totalSales.total_sales, "fullNumber")}
           </Card>
         </Col>
         <Col>
@@ -175,7 +180,8 @@ export default function Home() {
           >
             {cleanNumbers(
               (percentageNumber / 100) *
-                (totalSales.total_sales - totalSales.total_refunds)
+                (totalSales.total_sales - totalSales.total_refunds),
+              "fullNumber"
             )}
           </Card>
         </Col>
@@ -193,7 +199,8 @@ export default function Home() {
             title='Subscribers'
           >
             {cleanNumbers(
-              YTStats === "Loading" ? "0" : YTStats.subscriberCount
+              YTStats === "Loading" ? "0" : YTStats.subscriberCount,
+              "roundedNumber"
             )}
           </Card>
         </Col>
@@ -203,7 +210,10 @@ export default function Home() {
             text='white'
             title='Total Views'
           >
-            {cleanNumbers(YTStats === "Loading" ? "0" : YTStats.viewCount)}
+            {cleanNumbers(
+              YTStats === "Loading" ? "0" : YTStats.viewCount,
+              "roundedNumber"
+            )}
           </Card>
         </Col>
       </Row>
